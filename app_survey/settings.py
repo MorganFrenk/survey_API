@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=tq2)9ssk@w3$y-dhhllrqk&v8$w85iqn5h%_j07@252%9n@98'
+SECRET_KEY = 'django-insecure-)qgpsf8li!d&z8(@mpkvc)a)0de4+!jct5%x)o8brbbf89f$&)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,14 +76,11 @@ WSGI_APPLICATION = 'app_survey.wsgi.application'
 
 DATABASES = {
     'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'dbname',
-    'USER': 'username',
-    'PASSWORD': 'userpass',
-    'HOST': '127.0.0.1',
-    'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
