@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Survey(models.Model):
-    creator_user_id = models.ForeignKey(User, related_name='created_survey')
+    creator_user_id = models.ForeignKey(User, related_name='created_survey', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     date = models.DateTimeField()
     description = models.CharField(max_length=200)
@@ -29,7 +29,7 @@ class Choice(models.Model):
 
 
 class Answer(models.Model):
-    user_id = models.ForeignKey(User, related_name='answers')
+    user_id = models.ForeignKey(User, related_name='answers', on_delete=models.CASCADE)
     survey = models.ForeignKey(Survey, related_name='answers', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, related_name='answers', on_delete=models.CASCADE)
