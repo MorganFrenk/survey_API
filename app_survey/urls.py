@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework_nested import routers
+
 from app_survey.views import (
     SurveyViewSet,
     QuestionViewSet,
@@ -24,14 +25,31 @@ from app_survey.views import (
 )
 
 
-router = DefaultRouter()
+router = routers.SimpleRouter()
 router.register(r'surveys', SurveyViewSet)
-router.register(r'questions', QuestionViewSet)
-router.register(r'choices', ChoiceViewSet)
-router.register(r'answers', AnswerViewSet)
+
+domains_router = routers.NestedSimpleRouter(
+    router,
+    r'surveys',
+    lookup='survey',
+)
+domains_router.register(
+    r'questions',
+    QuestionViewSet,
+    basename='questions',
+)
+
+choices_router = routers.NestedSimpleRouter(
+    domains_router,
+    r'questions',
+    lookup='question',
+)
+choices_router.register(r'choices', ChoiceViewSet, basename='choices')
 
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('', include(domains_router.urls)),
+    path('', include(choices_router.urls)),
     path('admin/', admin.site.urls),
 ]

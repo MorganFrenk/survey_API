@@ -21,17 +21,22 @@ class SurveyViewSet(viewsets.ModelViewSet):
         count = Answer.objects.filter(
             survey=Survey.objects.filter(id=pk).get()
         ).count()
-        return Response(count)
+        statistics_data = {'Answers number': count}
+        return Response(statistics_data)
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
-    queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+    def get_queryset(self):
+        return Question.objects.filter(survey=self.kwargs['survey_pk'])
 
 
 class ChoiceViewSet(viewsets.ModelViewSet):
-    queryset = Choice.objects.all()
     serializer_class = ChoiceSerializer
+
+    def get_queryset(self):
+        return Choice.objects.filter(question=self.kwargs['question_pk'])
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
