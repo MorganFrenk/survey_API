@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class Survey(models.Model):
     creator_user_id = models.ForeignKey(User, related_name='created_survey', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now())
     description = models.CharField(max_length=200)
 
     def __str__(self):
@@ -35,4 +36,4 @@ class Answer(models.Model):
     choice = models.ForeignKey(Choice, related_name='answers', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.choice_text
+        return self.choice.text
