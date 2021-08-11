@@ -17,13 +17,24 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-import app_survey.views
+from app_survey.views import SurveyViewSet
 
+
+survey_list = SurveyViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+survey_detail = SurveyViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('API/surveys/', app_survey.views.SurveyList.as_view()),
-    path('API/surveys/<int:pk>/', app_survey.views.SurveyDetail.as_view()),
+    path('API/surveys/', survey_list, name='survey-list'),
+    path('API/surveys/<int:pk>/', survey_detail, name='survey-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

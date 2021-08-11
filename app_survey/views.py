@@ -1,13 +1,9 @@
+from rest_framework import viewsets
+
 from app_survey.models import Survey
 from app_survey.serializers import SurveySerializer
-from rest_framework import generics
 
 
-class SurveyList(generics.ListCreateAPIView):
-    queryset = Survey.objects.all()
-    serializer_class = SurveySerializer
-
-
-class SurveyDetail(generics.RetrieveUpdateDestroyAPIView):
+class SurveyViewSet(viewsets.ModelViewSet):
     queryset = Survey.objects.all()
     serializer_class = SurveySerializer
