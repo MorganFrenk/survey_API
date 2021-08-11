@@ -14,9 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
-
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from app_survey.views import (
     SurveyViewSet,
     QuestionViewSet,
@@ -25,60 +24,14 @@ from app_survey.views import (
 )
 
 
-survey_list = SurveyViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-survey_detail = SurveyViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
+router = DefaultRouter()
+router.register(r'surveys', SurveyViewSet)
+router.register(r'questions', QuestionViewSet)
+router.register(r'choices', ChoiceViewSet)
+router.register(r'answers', AnswerViewSet)
 
-question_list = QuestionViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-question_detail = QuestionViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
-
-choice_list = ChoiceViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-choice_detail = ChoiceViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
-
-answer_list = AnswerViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-answer_detail = AnswerViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('API/surveys/', survey_list, name='survey-list'),
-    path('API/surveys/<int:pk>/', survey_detail, name='survey-detail'),
-    path('API/questions/', question_list, name='question-list'),
-    path('API/questions<int:pk>/', question_detail, name='question-detail'),
-    path('API/choices/', choice_list, name='choice-list'),
-    path('API/choices/<int:pk>/', choice_detail, name='choice-detail'),
-    path('API/answers/', answer_list, name='answer-list'),
-    path('API/answers/<int:pk>/', answer_detail, name='answer-detail'),
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)
