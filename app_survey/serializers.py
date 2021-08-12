@@ -13,7 +13,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = '__all__'
-        
+
 
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
