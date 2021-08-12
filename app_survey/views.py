@@ -1,20 +1,22 @@
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 from app_survey.models import Answer, Choice, Question, Survey
-from app_survey.serializers import (
-    SurveySerializer,
-    QuestionSerializer,
-    ChoiceSerializer,
-    AnswerSerializer,
-)
+from app_survey.serializers import (AnswerSerializer, ChoiceSerializer,
+                                    QuestionSerializer, SurveySerializer)
 
 
 class SurveyViewSet(viewsets.ModelViewSet):
     queryset = Survey.objects.all()
     serializer_class = SurveySerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
 
     @action(detail=True)
     def statistics(self, request, pk=None, renderer_classes=[JSONRenderer]):
@@ -27,6 +29,15 @@ class SurveyViewSet(viewsets.ModelViewSet):
 
 class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(
+            user_id=self.request.user,
+            survey=Survey.objects.filter(id=self.kwargs['survey_pk']).get()
+        )
 
     def get_queryset(self):
         return Question.objects.filter(survey=self.kwargs['survey_pk'])
@@ -34,6 +45,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 class ChoiceViewSet(viewsets.ModelViewSet):
     serializer_class = ChoiceSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
 
     def get_queryset(self):
         return Choice.objects.filter(question=self.kwargs['question_pk'])
@@ -41,6 +58,12 @@ class ChoiceViewSet(viewsets.ModelViewSet):
 
 class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
 
     def get_queryset(self):
         return Answer.objects.filter(question=self.kwargs['question_pk'])

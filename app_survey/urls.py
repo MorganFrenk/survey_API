@@ -14,15 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework_nested import routers
 
-from app_survey.views import (
-    SurveyViewSet,
-    QuestionViewSet,
-    ChoiceViewSet,
-    AnswerViewSet,
-)
+from app_survey.views import (AnswerViewSet, ChoiceViewSet, QuestionViewSet,
+                              SurveyViewSet)
 
 
 router = routers.SimpleRouter()
@@ -59,4 +55,5 @@ urlpatterns = [
     path('', include(choices_router.urls)),
     path('', include(answer_router.urls)),
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
 ]
