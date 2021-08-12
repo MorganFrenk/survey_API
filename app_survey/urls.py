@@ -28,28 +28,35 @@ from app_survey.views import (
 router = routers.SimpleRouter()
 router.register(r'surveys', SurveyViewSet)
 
-domains_router = routers.NestedSimpleRouter(
+survey_router = routers.NestedSimpleRouter(
     router,
     r'surveys',
     lookup='survey',
 )
-domains_router.register(
+survey_router.register(
     r'questions',
     QuestionViewSet,
     basename='questions',
 )
 
 choices_router = routers.NestedSimpleRouter(
-    domains_router,
+    survey_router,
     r'questions',
     lookup='question',
 )
 choices_router.register(r'choices', ChoiceViewSet, basename='choices')
 
+answer_router = routers.NestedSimpleRouter(
+    survey_router,
+    r'questions',
+    lookup='question',
+)
+answer_router.register(r'answers', AnswerViewSet, basename='answers')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('', include(domains_router.urls)),
+    path('', include(survey_router.urls)),
     path('', include(choices_router.urls)),
+    path('', include(answer_router.urls)),
     path('admin/', admin.site.urls),
 ]

@@ -40,5 +40,7 @@ class ChoiceViewSet(viewsets.ModelViewSet):
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
-    queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
+
+    def get_queryset(self):
+        return Answer.objects.filter(question=self.kwargs['question_pk'])
