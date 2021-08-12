@@ -4,8 +4,9 @@ from django.utils import timezone
 
 
 class Survey(models.Model):
-    creator_user_id = models.ForeignKey(
+    user_id = models.ForeignKey(
         User,
+        editable=False,
         related_name='created_survey',
         on_delete=models.CASCADE,
     )
@@ -18,8 +19,15 @@ class Survey(models.Model):
 
 
 class Question(models.Model):
+    user_id = models.ForeignKey(
+        User,
+        editable=False,
+        related_name='questions',
+        on_delete=models.CASCADE,
+    )
     survey = models.ForeignKey(
         Survey,
+        editable=False,
         related_name='questions',
         on_delete=models.CASCADE,
     )
@@ -30,8 +38,15 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    user_id = models.ForeignKey(
+        User,
+        editable=False,
+        related_name='choices',
+        on_delete=models.CASCADE,
+    )
     question = models.ForeignKey(
         Question,
+        editable=False,
         related_name='choices',
         on_delete=models.CASCADE
     )
@@ -44,10 +59,14 @@ class Choice(models.Model):
 class Answer(models.Model):
     user_id = models.ForeignKey(
         User,
+        editable=False,
         related_name='answers',
         on_delete=models.CASCADE,
     )
-    date = models.DateTimeField(editable=False, default=timezone.now)
+    date = models.DateTimeField(
+        editable=False,
+        default=timezone.now,
+    )
     survey = models.ForeignKey(
         Survey,
         related_name='answers',

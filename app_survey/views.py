@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
+from app_survey.permissions import IsOwnerOrReadOnly
 from app_survey.models import Answer, Choice, Question, Survey
 from app_survey.serializers import (AnswerSerializer, ChoiceSerializer,
                                     QuestionSerializer, SurveySerializer)
@@ -13,6 +14,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
     serializer_class = SurveySerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):
@@ -31,9 +33,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):
+        obj = Survey.objects.filter(id=self.kwargs['survey_pk']).get()
+        self.check_object_permissions(self.request, obj)
         serializer.save(
             user_id=self.request.user,
             survey=Survey.objects.filter(id=self.kwargs['survey_pk']).get()
@@ -47,9 +52,12 @@ class ChoiceViewSet(viewsets.ModelViewSet):
     serializer_class = ChoiceSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):
+        obj = Question.objects.filter(id=self.kwargs['question_pk']).get()
+        self.check_object_permissions(self.request, obj)
         serializer.save(user_id=self.request.user)
 
     def get_queryset(self):
@@ -60,6 +68,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):
