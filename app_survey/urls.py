@@ -35,25 +35,18 @@ survey_router.register(
     basename='questions',
 )
 
-choices_router = routers.NestedSimpleRouter(
+question_router = routers.NestedSimpleRouter(
     survey_router,
     r'questions',
     lookup='question',
 )
-choices_router.register(r'choices', ChoiceViewSet, basename='choices')
-
-answer_router = routers.NestedSimpleRouter(
-    survey_router,
-    r'questions',
-    lookup='question',
-)
-answer_router.register(r'answers', AnswerViewSet, basename='answers')
+question_router.register(r'choices', ChoiceViewSet, basename='choices')
+question_router.register(r'answers', AnswerViewSet, basename='answers')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('', include(survey_router.urls)),
-    path('', include(choices_router.urls)),
-    path('', include(answer_router.urls)),
+    path('api/', include(router.urls)),
+    path('api/', include(survey_router.urls)),
+    path('api/', include(question_router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 ]

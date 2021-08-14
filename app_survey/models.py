@@ -69,11 +69,13 @@ class Answer(models.Model):
     )
     survey = models.ForeignKey(
         Survey,
+        editable=False,
         related_name='answers',
         on_delete=models.CASCADE,
     )
     question = models.ForeignKey(
         Question,
+        editable=False,
         related_name='answers',
         on_delete=models.CASCADE,
     )

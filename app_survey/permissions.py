@@ -9,7 +9,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         user_has_permission = (obj.user_id == request.user)
 
-        if obj.__class__.__name__ == 'Survey':
+        if obj.__class__.__name__ == 'Survey' or 'Answer':
             user_has_permission_for_parent = True
 
         elif obj.__class__.__name__ == 'Question':

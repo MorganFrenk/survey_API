@@ -56,8 +56,8 @@ class ChoiceViewSet(viewsets.ModelViewSet):
     ]
 
     def perform_create(self, serializer):
-        obj = Question.objects.filter(id=self.kwargs['question_pk']).get()
-        self.check_object_permissions(self.request, obj)
+        que_obj = Question.objects.filter(id=self.kwargs['question_pk']).get()
+        self.check_object_permissions(self.request, que_obj)
         serializer.save(user_id=self.request.user)
 
     def get_queryset(self):
@@ -72,7 +72,13 @@ class AnswerViewSet(viewsets.ModelViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user)
+        que_obj = Question.objects.filter(id=self.kwargs['question_pk']).get()
+        survey_obj = Survey.objects.filter(id=self.kwargs['survey_pk']).get()
+        serializer.save(
+            user_id=self.request.user,
+            survey=survey_obj,
+            question=que_obj,
+            )
 
     def get_queryset(self):
         return Answer.objects.filter(question=self.kwargs['question_pk'])
