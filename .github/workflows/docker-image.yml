@@ -16,3 +16,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag app_survey-image:$(date +%s)
+  
+  rundb:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run db
+      run: docker run app_survey_postgres
