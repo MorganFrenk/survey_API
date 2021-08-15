@@ -2,11 +2,11 @@ version: "3.8"
    
 services:
   db:
-    image: app_survey_postgres
+    image: postgres
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=app_survey_postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
