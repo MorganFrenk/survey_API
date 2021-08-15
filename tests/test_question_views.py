@@ -34,7 +34,7 @@ class QuestionsTestCase(APITestCase):
             password='randompass',
         )
         self.questions_url = f'{reverse("survey-list")}{self.survey.id}/questions/'
-        
+  
     def test_questions_list_authed(self):
         response = self.client.get(self.questions_url)
         assert response.status_code == status.HTTP_200_OK
@@ -69,3 +69,6 @@ class QuestionsTestCase(APITestCase):
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+    def test_question_detail(self):
+        response = self.client.get(f'{self.questions_url}{self.question.id}/')
+        assert response.status_code == status.HTTP_200_OK
