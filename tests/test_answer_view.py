@@ -86,3 +86,47 @@ class AnswersTestCase(APITestCase):
             format='json',
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_answer_detail(self):
+        response = self.client.get(self.answers_list_url)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_answer_update_owner(self):
+        new_choice = Choice.objects.create(
+            text='new-choice-text',
+            user_id=self.user,
+            question_id=self.question.id,
+        )
+        response = self.client.put(
+            self.answers_detail_url,
+            data={
+                'choice': new_choice.id,
+            },
+            format='json',
+        )
+        expected_json = {
+            'id': self.answer.id,
+            'user_id': self.answer.user_id.id,
+            'survey': self.answer.survey.id,
+            'question': self.answer.question.id,
+            'choice': new_choice.id,
+            'date': self.answer.date.isoformat()[:-6]+'Z',
+        }
+        assert response.status_code == status.HTTP_200_OK
+        assert json.loads(response.content) == expected_json
+
+    def test_answer_update_random_user(self):
+        self.client.force_authenticate(user=self.random_user)
+        new_choice = Choice.objects.create(
+            text='new-choice-text',
+            user_id=self.user,
+            question_id=self.question.id,
+        )
+        response = self.client.put(
+            self.answers_detail_url,
+            data={
+                'choice': new_choice.id,
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
