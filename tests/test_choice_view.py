@@ -110,3 +110,17 @@ class ChoicesTestCase(APITestCase):
             format='json',
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_choice_delete_owner(self):
+        response = self.client.delete(
+            self.choice_detail_url,
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Question.objects.filter(text='choice-text').first()
+
+    def test_choice_delete_random_user(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.delete(
+            self.choice_detail_url,
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
