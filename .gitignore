@@ -130,3 +130,6 @@ dmypy.json
 
 # Docker
 data
+
+# IDE
+.vscode
