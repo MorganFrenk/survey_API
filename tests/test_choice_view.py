@@ -78,3 +78,35 @@ class ChoicesTestCase(APITestCase):
             format='json',
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_choice_detail(self):
+        response = self.client.get(self.choice_detail_url)
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_choice_update_owner(self):
+        response = self.client.put(
+            self.choice_detail_url,
+            data={
+                'text': 'newtext',
+            },
+            format='json',
+        )
+        expected_json = {
+            'id': self.choice.id,
+            'text': 'newtext',
+            'user_id': self.choice.user_id.id,
+            'question': self.choice.question.id,
+        }
+        assert response.status_code == status.HTTP_200_OK
+        assert json.loads(response.content) == expected_json
+
+    def test_choice_update_random_user(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.put(
+            self.choice_detail_url,
+            data={
+                'text': 'newtext',
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
