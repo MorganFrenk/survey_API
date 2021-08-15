@@ -34,7 +34,7 @@ class QuestionsTestCase(APITestCase):
             password='randompass',
         )
         self.questions_url = f'{reverse("survey-list")}{self.survey.id}/questions/'
-
+        
     def test_questions_list_authed(self):
         response = self.client.get(self.questions_url)
         assert response.status_code == status.HTTP_200_OK
@@ -48,6 +48,24 @@ class QuestionsTestCase(APITestCase):
             },
             format='json',
         )
-        
+        new_question = Question.objects.filter(text='new-q-text').get()
+        expected_json = {
+            'id': new_question.id,
+            'text': new_question.text,
+            'user_id': new_question.user_id.id,
+            'survey': new_question.survey_id,
+        }
         assert response.status_code == status.HTTP_201_CREATED
-        
+        assert json.loads(response.content) == expected_json
+
+    def test_question_create_unauthed(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.post(
+            self.questions_url,
+            data={
+                'text': 'new-q-text',
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
