@@ -7,12 +7,26 @@ on:
     branches: [ master ]
 
 jobs:
-
-  build:
-
+  docker:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag app_survey-image:$(date +%s)
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Create containers
+      run: docker-compose -f "docker-compose.yml" build
+    
+    - name: Start container
+      run: docker-compose -f "docker-compose.yml" up
+      
+    - name: Run migrations
+      run: docker-compose exec web python manage.py migrate
+      
+    - name: Run tests
+      run: docker-compose exec web pytest
+
+    - name: Stop containers
+      if: always()
+      run: docker-compose -f "docker-compose.yml" down
