@@ -39,6 +39,10 @@ docker-compose exec web python manage.py migrate
 ```
 docker-compose exec web python manage.py createsuperuser
 ```
+* Опционально можно протестировать:
+```
+docker-compose exec web pytest
+```
 ### Использование
 #### Получить токен для аутентификации:
 * Получить токен. Метод POST.
