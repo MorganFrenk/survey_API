@@ -21,7 +21,7 @@
 ### Установка:
 * Склонировать репозитарий:
 ```
-https://github.com/MorganFrenk/Trood_test_task.git
+https://github.com/MorganFrenk/survey_API.git
 ```
 * Перейти в папку проекта:
 ```
