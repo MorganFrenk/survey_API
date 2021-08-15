@@ -33,9 +33,15 @@ class QuestionsTestCase(APITestCase):
             username='randomuser',
             password='randompass',
         )
-        self.questions_list_url = f'{reverse("survey-list")}{self.survey.id}/questions/'
-        self.question_detail_url = f'{self.questions_list_url}{self.question.id}/'
-        
+        self.questions_list_url = (
+            f'{reverse("survey-list")}'
+            + f'{self.survey.id}/questions/'
+        )
+        self.question_detail_url = (
+            f'{self.questions_list_url}'
+            + f'{self.question.id}/'
+        )
+
     def test_questions_list_authed(self):
         response = self.client.get(self.questions_list_url)
         assert response.status_code == status.HTTP_200_OK

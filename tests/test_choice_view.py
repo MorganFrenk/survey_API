@@ -124,3 +124,14 @@ class ChoicesTestCase(APITestCase):
             self.choice_detail_url,
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_choice_not_survey_owner(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.post(
+            self.choices_list_url,
+            data={
+                'text': 'new-choice-text',
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN

@@ -34,6 +34,7 @@ class SurveysTestCase(APITestCase):
     def test_surveys_list_authed(self):
         response = self.client.get(self.list_url)
         assert response.status_code == status.HTTP_200_OK
+        assert 'name' in json.loads(response.content)[0]['name']
 
     def test_survey_create_authed(self):
         response = self.client.post(
@@ -87,9 +88,10 @@ class SurveysTestCase(APITestCase):
             'description': 'newdescription',
             'user_id': self.survey.user_id.id,
         }
+        assert response.status_code == status.HTTP_200_OK
         assert json.loads(response.content) == expected_json
 
-    def test_survey_update_random_use(self):
+    def test_survey_update_random_user(self):
         self.client.force_authenticate(user=self.random_user)
         response = self.client.put(
             f'{self.list_url}{self.survey.id}/',
