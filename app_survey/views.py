@@ -58,7 +58,10 @@ class ChoiceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         que_obj = Question.objects.filter(id=self.kwargs['question_pk']).get()
         self.check_object_permissions(self.request, que_obj)
-        serializer.save(user_id=self.request.user)
+        serializer.save(
+            user_id=self.request.user,
+            question=que_obj,
+        )
 
     def get_queryset(self):
         return Choice.objects.filter(question=self.kwargs['question_pk'])
