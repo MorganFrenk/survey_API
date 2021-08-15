@@ -116,3 +116,13 @@ class QuestionsTestCase(APITestCase):
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    def test_question_not_survey_owner(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.post(
+            self.questions_list_url,
+            data={
+                'text': 'new-q-text',
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
