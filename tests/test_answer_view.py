@@ -130,3 +130,28 @@ class AnswersTestCase(APITestCase):
             format='json',
         )
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_answer_delete_owner(self):
+        response = self.client.delete(
+            self.answers_detail_url,
+        )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Answer.objects.filter(choice=self.choice).first()
+
+    def test_answer_delete_random_user(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.delete(
+            self.answers_detail_url,
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_answer_not_survey_owner(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.post(
+            self.answers_list_url,
+            data={
+                'choice': self.choice.id,
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_201_CREATED

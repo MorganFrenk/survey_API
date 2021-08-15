@@ -116,7 +116,7 @@ class ChoicesTestCase(APITestCase):
             self.choice_detail_url,
         )
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not Question.objects.filter(text='choice-text').first()
+        assert not Choice.objects.filter(text='choice-text').first()
 
     def test_choice_delete_random_user(self):
         self.client.force_authenticate(user=self.random_user)

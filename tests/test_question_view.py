@@ -45,7 +45,7 @@ class QuestionsTestCase(APITestCase):
     def test_questions_list_authed(self):
         response = self.client.get(self.questions_list_url)
         assert response.status_code == status.HTTP_200_OK
-        assert 'q-text' in json.loads(response.content)[0]['text']
+        assert 'q-text' == json.loads(response.content)[0]['text']
 
     def test_question_create_authed(self):
         response = self.client.post(

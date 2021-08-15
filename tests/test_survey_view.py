@@ -34,7 +34,7 @@ class SurveysTestCase(APITestCase):
     def test_surveys_list_authed(self):
         response = self.client.get(self.list_url)
         assert response.status_code == status.HTTP_200_OK
-        assert 'name' in json.loads(response.content)[0]['name']
+        assert 'name' == json.loads(response.content)[0]['name']
 
     def test_survey_create_authed(self):
         response = self.client.post(
