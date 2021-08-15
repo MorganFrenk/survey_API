@@ -33,16 +33,17 @@ class QuestionsTestCase(APITestCase):
             username='randomuser',
             password='randompass',
         )
-        self.questions_url = f'{reverse("survey-list")}{self.survey.id}/questions/'
-  
+        self.questions_list_url = f'{reverse("survey-list")}{self.survey.id}/questions/'
+        self.question_detail_url = f'{self.questions_list_url}{self.question.id}/'
+        
     def test_questions_list_authed(self):
-        response = self.client.get(self.questions_url)
+        response = self.client.get(self.questions_list_url)
         assert response.status_code == status.HTTP_200_OK
         assert 'q-text' in json.loads(response.content)[0]['text']
 
     def test_question_create_authed(self):
         response = self.client.post(
-            self.questions_url,
+            self.questions_list_url,
             data={
                 'text': 'new-q-text',
             },
@@ -61,7 +62,7 @@ class QuestionsTestCase(APITestCase):
     def test_question_create_unauthed(self):
         self.client.force_authenticate(user=None)
         response = self.client.post(
-            self.questions_url,
+            self.questions_list_url,
             data={
                 'text': 'new-q-text',
             },
@@ -70,5 +71,34 @@ class QuestionsTestCase(APITestCase):
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_question_detail(self):
-        response = self.client.get(f'{self.questions_url}{self.question.id}/')
+        response = self.client.get(self.question_detail_url)
         assert response.status_code == status.HTTP_200_OK
+
+    def test_question_update_owner(self):
+        response = self.client.put(
+            self.question_detail_url,
+            data={
+                'text': 'newtext',
+            },
+            format='json',
+        )
+        expected_json = {
+            'id': self.question.id,
+            'text': 'newtext',
+            'user_id': self.question.user_id.id,
+            'survey': self.question.survey_id,
+        }
+        assert response.status_code == status.HTTP_200_OK
+        assert json.loads(response.content) == expected_json
+
+    def test_question_update_random_user(self):
+        self.client.force_authenticate(user=self.random_user)
+        response = self.client.put(
+            self.question_detail_url,
+            data={
+                'text': 'newtext',
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
