@@ -32,104 +32,49 @@ class ChoicesTestCase(APITestCase):
         self.choice = Choice.objects.create(
             text='choice-text',
             user_id=self.user,
-            survey_id=self.survey.id,
             question_id=self.question.id,
         )
         self.random_user = User.objects.create_user(
             username='randomuser',
             password='randompass',
         )
-        self.choices_list_url = f'{reverse("survey-list")}{self.survey.id}/questions/{self.question.id}'
+        self.choices_list_url = (
+            f'{reverse("survey-list")}'
+            + f'{self.survey.id}/questions/'
+            + f'{self.question.id}/choices/'
+        )
         self.choice_detail_url = f'{self.choices_list_url}{self.choice.id}/'
-        
+
     def test_choices_list_authed(self):
         response = self.client.get(self.choices_list_url)
         assert response.status_code == status.HTTP_200_OK
         assert 'choice-text' in json.loads(response.content)[0]['text']
 
-    # def test_question_create_authed(self):
-    #     response = self.client.post(
-    #         self.questions_list_url,
-    #         data={
-    #             'text': 'new-q-text',
-    #         },
-    #         format='json',
-    #     )
-    #     new_question = Question.objects.filter(text='new-q-text').get()
-    #     expected_json = {
-    #         'id': new_question.id,
-    #         'text': new_question.text,
-    #         'user_id': new_question.user_id.id,
-    #         'survey': new_question.survey_id,
-    #     }
-    #     assert response.status_code == status.HTTP_201_CREATED
-    #     assert json.loads(response.content) == expected_json
+    def test_choice_create_authed(self):
+        response = self.client.post(
+            self.choices_list_url,
+            data={
+                'text': 'new-choice-text',
+            },
+            format='json',
+        )
+        new_choice = Choice.objects.filter(text='new-choice-text').get()
+        expected_json = {
+            'id': new_choice.id,
+            'text': new_choice.text,
+            'user_id': new_choice.user_id.id,
+            'question': new_choice.question.id,
+        }
+        assert response.status_code == status.HTTP_201_CREATED
+        assert json.loads(response.content) == expected_json
 
-    # def test_question_create_unauthed(self):
-    #     self.client.force_authenticate(user=None)
-    #     response = self.client.post(
-    #         self.questions_list_url,
-    #         data={
-    #             'text': 'new-q-text',
-    #         },
-    #         format='json',
-    #     )
-    #     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    # def test_question_detail(self):
-    #     response = self.client.get(self.question_detail_url)
-    #     assert response.status_code == status.HTTP_200_OK
-
-    # def test_question_update_owner(self):
-    #     response = self.client.put(
-    #         self.question_detail_url,
-    #         data={
-    #             'text': 'newtext',
-    #         },
-    #         format='json',
-    #     )
-    #     expected_json = {
-    #         'id': self.question.id,
-    #         'text': 'newtext',
-    #         'user_id': self.question.user_id.id,
-    #         'survey': self.question.survey_id,
-    #     }
-    #     assert response.status_code == status.HTTP_200_OK
-    #     assert json.loads(response.content) == expected_json
-
-    # def test_question_update_random_user(self):
-    #     self.client.force_authenticate(user=self.random_user)
-    #     response = self.client.put(
-    #         self.question_detail_url,
-    #         data={
-    #             'text': 'newtext',
-    #         },
-    #         format='json',
-    #     )
-    #     assert response.status_code == status.HTTP_403_FORBIDDEN
-
-    # def test_question_delete_owner(self):
-    #     response = self.client.delete(
-    #         self.question_detail_url,
-    #     )
-    #     assert response.status_code == status.HTTP_204_NO_CONTENT
-    #     assert not Question.objects.filter(text='q-text').first()
-
-    # def test_question_delete_random_user(self):
-    #     self.client.force_authenticate(user=self.random_user)
-    #     response = self.client.delete(
-    #         self.question_detail_url,
-    #     )
-    #     assert response.status_code == status.HTTP_403_FORBIDDEN
-
-    # def test_question_not_survey_owner(self):
-    #     self.client.force_authenticate(user=self.random_user)
-    #     response = self.client.post(
-    #         self.questions_list_url,
-    #         data={
-    #             'text': 'new-q-text',
-    #         },
-    #         format='json',
-    #     )
-    #     assert response.status_code == status.HTTP_403_FORBIDDEN
-    
+    def test_choice_create_unauthed(self):
+        self.client.force_authenticate(user=None)
+        response = self.client.post(
+            self.choices_list_url,
+            data={
+                'text': 'new-choice-text',
+            },
+            format='json',
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
