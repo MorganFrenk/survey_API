@@ -15,8 +15,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Build containers
+      run: docker-compose -f "docker-compose.yml" build
+      
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up -d --build
+      run: docker-compose -f "docker-compose.yml" up --build
       
     - name: Run migrations
       run: docker-compose exec web python manage.py migrate
